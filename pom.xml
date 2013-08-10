@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.tehbeard</groupId>
 	<artifactId>BeardStat</artifactId>
-	<version>0.6.2-RC-1</version>
+	<version>0.6.2-RC1.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>BeardStat</name>
 
@@ -79,18 +79,19 @@
 		</dependency>
 	</dependencies>
 
-	<distributionManagement>
-		<repository>
-			<id>dev-repo</id>
-			<name>dev.escapecraft.com Releases</name>
-			<url>scp://dev.escapecraft.com/var/www/maven</url>
-		</repository>
-		<snapshotRepository>
-			<id>dev-repo-snap</id>
-			<name>dev.escapecraft.com Snapshots</name>
-			<url>scp://dev.escapecraft.com/var/www/maven</url>
-		</snapshotRepository>
-	</distributionManagement>
+    <!-- maven deployment -->
+    <distributionManagement>
+        <repository>
+            <id>ehm-release</id>
+            <name>extrahardmode.com Releases</name>
+            <url>http://extrahardmode.com:8081/content/repositories/bukkit-plugins/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ehm-snapshot</id>
+            <name>extrahardmode.com Snapshots</name>
+            <url>http://extrahardmode.com:8081/content/repositories/bukkit-plugins-snapshot/</url>
+        </snapshotRepository>
+    </distributionManagement>
 	<build>
 		<extensions>
 			<extension>
