@@ -95,20 +95,20 @@ public class BeardStat extends JavaPlugin {
          * Shut down auto flusher, force cache to be saved, then kill static
          * reference to this plugin
          */
-        printCon("Stopping auto flusher");
+        printDebugCon("Stopping auto flusher");
         getServer().getScheduler().cancelTask(this.saveTaskId);
         if (this.playerStatManager != null) {
-            printCon("Flushing cache to database");
+            printDebugCon("Flushing cache to database");
             this.playerStatManager.saveCache();
             this.playerStatManager.flush();
-            printCon("Cache flushed to database");
+            printDebugCon("Cache flushed to database");
         }
     }
 
     @Override
     public void onEnable() {
 
-        printCon("Starting BeardStat");
+        printDebugCon("Starting BeardStat");
 
         // Read in the metadata file from jar and from data folder
         MetaDataCapture.readData(getResource("metadata.txt"));
@@ -121,15 +121,15 @@ public class BeardStat extends JavaPlugin {
 
         // load language file from jar and from data folder
         try {
-            printCon("Loading default language pack");
+            printDebugCon("Loading default language pack");
             LanguagePack.load(getResource("messages.lang"));
             File extLangPack = new File(getDataFolder(), "messages.lang");
             if (extLangPack.exists()) {
-                printCon("External language pack detected! Loading...");
+                printDebugCon("External language pack detected! Loading...");
                 LanguagePack.overlay(new FileInputStream(extLangPack));
             }
         } catch (IOException e1) {
-            printCon("Failed to load language pack");
+            printDebugCon("Failed to load language pack");
 
         }
 
@@ -144,8 +144,8 @@ public class BeardStat extends JavaPlugin {
         }
 
         // setup our data provider, fail out if it's not found
-        printCon("Connecting to database");
-        printCon("Using " + getConfig().getString("stats.database.type") + " Adpater");
+        printDebugCon("Connecting to database");
+        printDebugCon("Using " + getConfig().getString("stats.database.type") + " Adpater");
         if (getConfig().getString("stats.database.type") == null) {
             printCon("INVALID ADAPTER SELECTED");
             getPluginLoader().disablePlugin(this);
@@ -163,7 +163,7 @@ public class BeardStat extends JavaPlugin {
         // start the player manager
         this.playerStatManager = new PlayerStatManager(this, db);
 
-        printCon("initializing composite stats");
+        printDebugCon("initializing composite stats");
         try {
             // Load the dynamic stats from file
             loadDynamicStatConfiguration();
@@ -171,7 +171,7 @@ public class BeardStat extends JavaPlugin {
             handleError(new BeardStatRuntimeException("Error loading dynamic stats or custom formats", e, true));
         }
 
-        printCon("Registering events and collectors");
+        printDebugCon("Registering events and collectors");
 
         // register event listeners
         // get blacklist, then start and register each type of listener
@@ -198,7 +198,7 @@ public class BeardStat extends JavaPlugin {
             handleError(new BeardStatRuntimeException("Error starting database flusher", e, false));
         }
 
-        printCon("Loading commands");
+        printDebugCon("Loading commands");
         try {
             getCommand("stats").setExecutor(new StatCommand(this.playerStatManager, this));
             getCommand("played").setExecutor(new playedCommand(this.playerStatManager, this));
@@ -210,7 +210,7 @@ public class BeardStat extends JavaPlugin {
             handleError(new BeardStatRuntimeException("Error registering commands", e, false));
         }
 
-        printCon("loading any players already online");// Fix people being dumb
+        printDebugCon("loading any players already online");// Fix people being dumb
         for (Player player : getServer().getOnlinePlayers()) {
 
             OnlineTimeManager.setRecord(player.getName(), player.getWorld().getName());
@@ -234,7 +234,7 @@ public class BeardStat extends JavaPlugin {
         } catch (Exception e) {
             handleError(new BeardStatRuntimeException("Metrics threw an error during startup", null, true));
         }
-        printCon("BeardStat Loaded");
+        printDebugCon("BeardStat Loaded");
     }
 
     /**
@@ -244,21 +244,21 @@ public class BeardStat extends JavaPlugin {
 
         // convert old world lists over to blacklist (introduced. 0.4.7 - Honey)
         if (getConfig().contains("stats.worlds")) {
-            printCon("Moving blacklist to new location");
+            printDebugCon("Moving blacklist to new location");
             getConfig().set("stats.blacklist", getConfig().getStringList("stats.worlds"));
             getConfig().set("stats.worlds", null);
         }
 
         // Standard defaults updater
         if (!new File(getDataFolder(), "config.yml").exists()) {
-            printCon("Writing default config file to disk.");
+            printDebugCon("Writing default config file to disk.");
             getConfig().set("stats.configversion", null);
             getConfig().options().copyDefaults(true);
         }
         // update config if nessecary
         if (getConfig().getInt("stats.configversion", 0) < Integer.parseInt("${project.config.version}")) {
 
-            printCon("Updating config to include newest configuration options");
+            printDebugCon("Updating config to include newest configuration options");
             getConfig().set("stats.configversion", null);
             getConfig().options().copyDefaults(true);
 
